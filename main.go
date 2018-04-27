@@ -18,8 +18,13 @@ func main() {
 	flag.Parse()
 	files := flag.Args()
 	goPath := os.Getenv("GOPATH")
+	goRoot := os.Getenv("GOROOT")
 
-	standardPackages := getPackagesInDirectory("/usr/local/go")
+	if goRoot == "" {
+		goRoot = "/usr/local/go"
+	}
+
+	standardPackages := getPackagesInDirectory(goRoot)
 	workspacePackages := getPackagesInDirectory(goPath)
 
 	for name, packageList := range standardPackages {
