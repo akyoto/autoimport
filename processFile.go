@@ -13,7 +13,7 @@ import (
 )
 
 func processFile(path string) error {
-	file, err := os.Open(path)
+	file, err := os.OpenFile(path, os.O_RDWR, 0644)
 
 	if err != nil {
 		return err
@@ -50,8 +50,9 @@ func processFile(path string) error {
 	// Seek to the beginning
 	file.Seek(seekPos, 0)
 
-	file.Write([]byte("// Test"))
+	file.Write([]byte("// Test\n"))
 	file.Write(code[seekPos:])
+	file.Sync()
 
 	return nil
 }
