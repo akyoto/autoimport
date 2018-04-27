@@ -10,15 +10,14 @@ import (
 	"github.com/fatih/color"
 )
 
-func getWorkspacePackages() map[string][]*Package {
-	goPath := os.Getenv("GOPATH")
-	srcPath := path.Join(goPath, "src") + "/"
+func getPackagesInDirectory(directory string) map[string][]*Package {
+	srcPath := path.Join(directory, "src") + "/"
 	packages := []*Package{}
 	packageByPath := map[string]*Package{}
 	packagesByName := map[string][]*Package{}
 	packagePrefix := "package "
 
-	filepath.Walk(goPath, func(path string, info os.FileInfo, err error) error {
+	filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
 		if !info.IsDir() {
 			// Ignore files that are not Go source code
 			if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
@@ -43,7 +42,7 @@ func getWorkspacePackages() map[string][]*Package {
 				}
 
 				defer file.Close()
-				buffer := make([]byte, 256, 256)
+				buffer := make([]byte, 4096, 4096)
 				_, err = file.Read(buffer)
 
 				if err != nil {
