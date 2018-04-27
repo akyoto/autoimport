@@ -8,6 +8,7 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
+	"strings"
 
 	"github.com/fatih/color"
 )
@@ -26,10 +27,14 @@ func processFile(path string) error {
 		return err
 	}
 
-	err = parse(code, path)
+	importPaths, err := parse(code, path)
 
 	if err != nil {
 		return err
+	}
+
+	if len(importPaths) == 0 {
+		return nil
 	}
 
 	packagePos := bytes.Index(code, []byte("package "))
@@ -42,7 +47,7 @@ func processFile(path string) error {
 
 	for i := packagePos; i < len(code); i++ {
 		if code[i] == '\n' {
-			seekPos = int64(i)
+			seekPos = int64(i + 1)
 			break
 		}
 	}
@@ -50,14 +55,15 @@ func processFile(path string) error {
 	// Seek to the beginning
 	file.Seek(seekPos, 0)
 
-	file.Write([]byte("// Test\n"))
+	importCommand := fmt.Sprintf("\nimport (\n\t\"%s\"\n)\n\n", strings.Join(importPaths, "\"\n\t\""))
+	file.WriteString(importCommand)
 	file.Write(code[seekPos:])
 	file.Sync()
 
 	return nil
 }
 
-func parse(src []byte, fileName string) error {
+func parse(src []byte, fileName string) ([]string, error) {
 	// Initialize the scanner.
 	var s scanner.Scanner
 	fset := token.NewFileSet()                            // positions are relative to fset
@@ -168,6 +174,18 @@ func parse(src []byte, fileName string) error {
 					continue
 				}
 
+				if tok == token.IDENT {
+					identifiers = append(identifiers, literal)
+				}
+
+				if tok == token.PERIOD {
+					lastIdentifier := identifiers[len(identifiers)-1]
+
+					if !isVariable(lastIdentifier) {
+						packagesUsed[lastIdentifier] = true
+					}
+				}
+
 				if level == 1 {
 					if !parsedParameterName && tok.IsLiteral() {
 						funcParameters = append(funcParameters, literal)
@@ -186,7 +204,7 @@ func parse(src []byte, fileName string) error {
 		// fmt.Printf("%s\t%s\t%q\n", fset.Position(pos), tok, lit)
 	}
 
-	color.Green(fileName)
+	// color.Green(fileName)
 	importPaths := []string{}
 
 	for packageName := range packagesUsed {
@@ -205,7 +223,5 @@ func parse(src []byte, fileName string) error {
 		importPaths = append(importPaths, correctPackage.Path)
 	}
 
-	fmt.Println(importPaths)
-
-	return nil
+	return importPaths, nil
 }

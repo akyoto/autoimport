@@ -2,10 +2,8 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"sync"
-	"time"
 
 	"github.com/fatih/color"
 )
@@ -13,8 +11,6 @@ import (
 var packagesByName = map[string][]*Package{}
 
 func main() {
-	start := time.Now()
-
 	flag.Parse()
 	files := flag.Args()
 	goPath := os.Getenv("GOPATH")
@@ -27,11 +23,11 @@ func main() {
 	standardPackages := getPackagesInDirectory(goRoot)
 	workspacePackages := getPackagesInDirectory(goPath)
 
-	for name, packageList := range standardPackages {
-		packagesByName[name] = packageList
+	for name, packageList := range workspacePackages {
+		packagesByName[name] = append(packagesByName[name], packageList...)
 	}
 
-	for name, packageList := range workspacePackages {
+	for name, packageList := range standardPackages {
 		packagesByName[name] = append(packagesByName[name], packageList...)
 	}
 
@@ -53,5 +49,4 @@ func main() {
 	}
 
 	wg.Wait()
-	fmt.Println(len(packagesByName), "packages", time.Since(start))
 }

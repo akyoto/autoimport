@@ -73,7 +73,7 @@ func getPackagesInDirectory(directory string) map[string][]*Package {
 
 		baseName := filepath.Base(path)
 
-		if strings.HasPrefix(baseName, ".") || strings.HasPrefix(baseName, "_") {
+		if strings.HasPrefix(baseName, ".") || strings.HasPrefix(baseName, "_") || baseName == "vendor" || baseName == "builtin" {
 			return filepath.SkipDir
 		}
 
