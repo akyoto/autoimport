@@ -1,6 +1,8 @@
 package main
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"go/scanner"
 	"go/token"
@@ -24,7 +26,34 @@ func processFile(path string) error {
 		return err
 	}
 
-	return parse(code, path)
+	err = parse(code, path)
+
+	if err != nil {
+		return err
+	}
+
+	packagePos := bytes.Index(code, []byte("package "))
+
+	if packagePos == -1 {
+		return errors.New("Package definition missing")
+	}
+
+	seekPos := int64(0)
+
+	for i := packagePos; i < len(code); i++ {
+		if code[i] == '\n' {
+			seekPos = int64(i)
+			break
+		}
+	}
+
+	// Seek to the beginning
+	file.Seek(seekPos, 0)
+
+	file.Write([]byte("// Test"))
+	file.Write(code[seekPos:])
+
+	return nil
 }
 
 func parse(src []byte, fileName string) error {
