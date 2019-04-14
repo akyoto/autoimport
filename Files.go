@@ -10,7 +10,7 @@ import (
 var packagesByName = map[string][]*Package{}
 
 // Files finds the correct import statements and writes them to the given Go source files.
-func Files(files []string) {
+func Files(files []string) error {
 	goPath := os.Getenv("GOPATH")
 	goRoot := os.Getenv("GOROOT")
 
@@ -22,7 +22,7 @@ func Files(files []string) {
 		home, err := os.UserHomeDir()
 
 		if err != nil {
-			panic(err)
+			return err
 		}
 
 		goPath = home + "/go"
