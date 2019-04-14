@@ -10,7 +10,7 @@ import (
 	"os"
 	"strings"
 
-	"github.com/fatih/color"
+	"github.com/blitzprog/color"
 )
 
 func processFile(path string) error {

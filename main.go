@@ -5,7 +5,7 @@ import (
 	"os"
 	"sync"
 
-	"github.com/fatih/color"
+	"github.com/blitzprog/color"
 )
 
 var packagesByName = map[string][]*Package{}
@@ -18,6 +18,10 @@ func main() {
 
 	if goRoot == "" {
 		goRoot = "/usr/local/go"
+	}
+
+	if goPath == "" {
+		goPath = "~/go"
 	}
 
 	standardPackages := getPackagesInDirectory(goRoot)

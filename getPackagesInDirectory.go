@@ -7,7 +7,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/fatih/color"
+	"github.com/blitzprog/color"
 )
 
 func getPackagesInDirectory(directory string) map[string][]*Package {
