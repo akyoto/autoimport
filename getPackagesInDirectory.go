@@ -18,6 +18,11 @@ func getPackagesInDirectory(directory string) map[string][]*Package {
 	packagePrefix := "package "
 
 	filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
+		if info == nil {
+			color.Red("Invalid file path: %s", srcPath)
+			return nil
+		}
+
 		if !info.IsDir() {
 			// Ignore files that are not Go source code
 			if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {

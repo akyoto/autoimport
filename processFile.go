@@ -14,6 +14,7 @@ import (
 )
 
 func processFile(path string) error {
+	// Read file contents
 	file, err := os.OpenFile(path, os.O_RDWR, 0644)
 
 	if err != nil {
@@ -27,6 +28,7 @@ func processFile(path string) error {
 		return err
 	}
 
+	// Parse contents
 	importPaths, err := parse(code, path)
 
 	if err != nil {
@@ -37,6 +39,7 @@ func processFile(path string) error {
 		return nil
 	}
 
+	// Find package definition
 	packagePos := bytes.Index(code, []byte("package "))
 
 	if packagePos == -1 {
@@ -52,7 +55,7 @@ func processFile(path string) error {
 		}
 	}
 
-	// Seek to the beginning
+	// Seek to the beginning (after the package line)
 	file.Seek(seekPos, 0)
 
 	importCommand := fmt.Sprintf("\nimport (\n\t\"%s\"\n)\n\n", strings.Join(importPaths, "\"\n\t\""))
