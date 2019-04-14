@@ -57,4 +57,5 @@ func Files(files []string) error {
 	}
 
 	wg.Wait()
+	return nil
 }
