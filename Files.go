@@ -1,4 +1,4 @@
-package main
+package autoimport
 
 import (
 	"os"
@@ -7,8 +7,10 @@ import (
 	"github.com/blitzprog/color"
 )
 
-// autoImport finds the correct import statements and writes them to the given Go source files.
-func autoImport(files []string) {
+var packagesByName = map[string][]*Package{}
+
+// Files finds the correct import statements and writes them to the given Go source files.
+func Files(files []string) {
 	goPath := os.Getenv("GOPATH")
 	goRoot := os.Getenv("GOROOT")
 

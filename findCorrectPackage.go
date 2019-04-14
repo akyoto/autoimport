@@ -1,4 +1,4 @@
-package main
+package autoimport
 
 func findCorrectPackage(packages []*Package) *Package {
 	// // Choose the shortest path

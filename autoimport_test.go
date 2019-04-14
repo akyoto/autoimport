@@ -1,4 +1,4 @@
-package main
+package autoimport_test
 
 import "testing"
 
@@ -7,5 +7,5 @@ func TestCompile(t *testing.T) {
 		"examples/hello.go.txt",
 	}
 
-	autoImport(files)
+	autoimport.Files(files)
 }
