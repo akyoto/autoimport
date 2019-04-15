@@ -16,7 +16,7 @@ func GetPackagesInDirectory(srcPath string) map[string][]*Package {
 	packages := []*Package{}
 	packageByPath := map[string]*Package{}
 	packagesByName := map[string][]*Package{}
-	packagePrefix := "package "
+	packagePrefix := "\npackage "
 
 	if !strings.HasSuffix(srcPath, "/") {
 		srcPath += "/"
@@ -26,7 +26,7 @@ func GetPackagesInDirectory(srcPath string) map[string][]*Package {
 	onDirectory := func(path string) error {
 		baseName := filepath.Base(path)
 
-		if strings.HasPrefix(baseName, ".") || strings.HasPrefix(baseName, "_") || baseName == "vendor" || baseName == "builtin" {
+		if strings.HasPrefix(baseName, ".") || strings.HasPrefix(baseName, "_") || baseName == "vendor" || baseName == "builtin" || baseName == "internal" || baseName == "testdata" {
 			return filepath.SkipDir
 		}
 
@@ -66,42 +66,45 @@ func GetPackagesInDirectory(srcPath string) map[string][]*Package {
 			return nil
 		}
 
-		if pkg.Name == "" {
-			file, err := os.Open(path)
+		if pkg.Name != "" {
+			return nil
+		}
 
-			if err != nil {
-				return err
-			}
+		file, err := os.Open(path)
 
-			defer file.Close()
-			buffer := make([]byte, 4096)
-			_, err = file.Read(buffer)
+		if err != nil {
+			return err
+		}
 
-			if err != nil {
-				return err
-			}
+		defer file.Close()
+		buffer := make([]byte, 1+4096)
+		buffer[0] = '\n'
+		_, err = file.Read(buffer[1:])
 
-			packageLine := string(buffer)
-			prefixPos := strings.Index(packageLine, packagePrefix)
+		if err != nil {
+			return err
+		}
 
-			if prefixPos == -1 {
-				return nil
-			}
+		packageLine := string(buffer)
+		prefixPos := strings.Index(packageLine, packagePrefix)
 
-			packageLine = packageLine[prefixPos+len(packagePrefix):]
+		if prefixPos == -1 {
+			return nil
+		}
 
-			for index, char := range packageLine {
-				if unicode.IsSpace(char) {
-					pkg.Name = packageLine[:index]
+		packageLine = packageLine[prefixPos+len(packagePrefix):]
 
-					if pkg.Name == "main" {
-						return nil
-					}
+		for index, char := range packageLine {
+			if unicode.IsSpace(char) {
+				pkg.Name = packageLine[:index]
 
-					packagesByName[pkg.Name] = append(packagesByName[pkg.Name], pkg)
-					// fmt.Printf("Package %s in directory %s\n", color.GreenString(pkg.Name), color.YellowString(pkg.DirectoryName))
+				if pkg.Name == "main" {
 					return nil
 				}
+
+				packagesByName[pkg.Name] = append(packagesByName[pkg.Name], pkg)
+				// fmt.Printf("Package %s in directory %s\n", color.GreenString(pkg.Name), color.YellowString(pkg.DirectoryName))
+				return nil
 			}
 		}
 
