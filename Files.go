@@ -9,21 +9,10 @@ var packagesByName = map[string][]*Package{}
 
 // Files finds the correct import statements and writes them to the given Go source files.
 func Files(files []string) error {
-	goPath := os.Getenv("GOPATH")
 	goRoot := os.Getenv("GOROOT")
 
 	if goRoot == "" {
 		goRoot = "/usr/local/go"
-	}
-
-	if goPath == "" {
-		home, err := os.UserHomeDir()
-
-		if err != nil {
-			return err
-		}
-
-		goPath = home + "/go"
 	}
 
 	standardPackages := GetPackagesInDirectory(path.Join(goRoot, "src"))
