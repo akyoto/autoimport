@@ -2,9 +2,7 @@ package autoimport
 
 import (
 	"os"
-	"sync"
-
-	"github.com/blitzprog/color"
+	"path"
 )
 
 var packagesByName = map[string][]*Package{}
@@ -28,34 +26,26 @@ func Files(files []string) error {
 		goPath = home + "/go"
 	}
 
-	standardPackages := getPackagesInDirectory(goRoot)
-	workspacePackages := getPackagesInDirectory(goPath)
+	standardPackages := GetPackagesInDirectory(path.Join(goRoot, "src"))
+	packagesByName = standardPackages
 
-	for name, packageList := range workspacePackages {
-		packagesByName[name] = append(packagesByName[name], packageList...)
-	}
+	// wg := sync.WaitGroup{}
 
-	for name, packageList := range standardPackages {
-		packagesByName[name] = append(packagesByName[name], packageList...)
-	}
+	// for _, file := range files {
+	// 	wg.Add(1)
+	// 	path := file
 
-	wg := sync.WaitGroup{}
+	// 	go func() {
+	// 		err := processFile(path)
 
-	for _, file := range files {
-		wg.Add(1)
-		path := file
+	// 		if err != nil {
+	// 			color.Red(err.Error())
+	// 		}
 
-		go func() {
-			err := processFile(path)
+	// 		wg.Done()
+	// 	}()
+	// }
 
-			if err != nil {
-				color.Red(err.Error())
-			}
-
-			wg.Done()
-		}()
-	}
-
-	wg.Wait()
+	// wg.Wait()
 	return nil
 }
