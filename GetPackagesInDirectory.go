@@ -11,15 +11,15 @@ import (
 )
 
 // GetPackagesInDirectory returns a map of package names mapped to packages.
-func GetPackagesInDirectory(srcPath string) map[string][]*Package {
+func GetPackagesInDirectory(srcPath string, root string) PackageIndex {
 	fmt.Println("Scanning", srcPath)
 	packages := []*Package{}
 	packageByPath := map[string]*Package{}
 	packagesByName := map[string][]*Package{}
 	packagePrefix := "\npackage "
 
-	if !strings.HasSuffix(srcPath, "/") {
-		srcPath += "/"
+	if !strings.HasSuffix(root, "/") {
+		root += "/"
 	}
 
 	// onDirectory
@@ -30,7 +30,7 @@ func GetPackagesInDirectory(srcPath string) map[string][]*Package {
 			return filepath.SkipDir
 		}
 
-		packagePath := strings.TrimPrefix(path, srcPath)
+		packagePath := strings.TrimPrefix(path, root)
 		packageName := filepath.Base(packagePath)
 
 		if packageName == "." {
@@ -57,7 +57,7 @@ func GetPackagesInDirectory(srcPath string) map[string][]*Package {
 		}
 
 		packagePath := filepath.Dir(path)
-		packagePath = strings.TrimPrefix(packagePath, srcPath)
+		packagePath = strings.TrimPrefix(packagePath, root)
 		// fmt.Println("Go file in", packagePath, filepath.Base(path))
 
 		pkg, exists := packageByPath[packagePath]
@@ -129,15 +129,6 @@ func GetPackagesInDirectory(srcPath string) map[string][]*Package {
 
 		return onDirectory(path)
 	})
-
-	// Output
-	for name, packageList := range packagesByName {
-		fmt.Println(color.GreenString(name))
-
-		for _, pkg := range packageList {
-			fmt.Printf(" - %s\n", pkg.Path)
-		}
-	}
 
 	return packagesByName
 }
