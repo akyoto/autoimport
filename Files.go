@@ -1,22 +1,24 @@
 package autoimport
 
-import (
-	"os"
-	"path"
-)
-
 var packagesByName = map[string][]*Package{}
 
 // Files finds the correct import statements and writes them to the given Go source files.
 func Files(files []string) error {
-	goRoot := os.Getenv("GOROOT")
-
-	if goRoot == "" {
-		goRoot = "/usr/local/go"
+	if len(files) == 0 {
+		return nil
 	}
 
-	standardPackages := GetPackagesInDirectory(path.Join(goRoot, "src"))
+	// Scan the standard library
+	standardPackagesPath := findStandardPackagesPath()
+	standardPackages := GetPackagesInDirectory(standardPackagesPath)
 	packagesByName = standardPackages
+
+	// Find go.mod file
+	goModPath := FindGoMod(files[0])
+
+	// Scan go.mod required dependencies
+	println(goModPath)
+	// ...
 
 	// wg := sync.WaitGroup{}
 
