@@ -17,7 +17,6 @@ func Files(files []string) error {
 	standardPackagesPath := findStandardPackagesPath()
 	standardPackages := GetPackagesInDirectory(standardPackagesPath, standardPackagesPath)
 	packagesByName = standardPackages
-	printPackagesByName(standardPackages)
 
 	// Find go.mod file
 	goModPath := FindGoMod(files[0])
@@ -36,8 +35,13 @@ func Files(files []string) error {
 		directoryName := fmt.Sprintf("%s@%s", dep.ImportPath, dep.Version)
 		packageLocation := path.Join(goModulesPath, directoryName)
 		importedPackages := GetPackagesInDirectory(packageLocation, goModulesPath)
-		printPackagesByName(importedPackages)
+
+		for name, packageList := range importedPackages {
+			packagesByName[name] = append(packageList, packagesByName[name]...)
+		}
 	}
+
+	printPackagesByName(packagesByName)
 
 	// ...
 

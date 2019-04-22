@@ -2,7 +2,8 @@ package autoimport
 
 // Package ...
 type Package struct {
-	DirectoryName string
 	Name          string
-	Path          string
+	RealPath      string
+	ImportPath    string
+	DirectoryName string
 }

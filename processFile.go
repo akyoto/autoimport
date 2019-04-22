@@ -219,11 +219,11 @@ func parse(src []byte, fileName string) ([]string, error) {
 		}
 
 		// for _, pkg := range packages {
-		// 	fmt.Println(" - " + pkg.Path)
+		// 	fmt.Println(" - " + pkg.RealPath)
 		// }
 
 		correctPackage := findCorrectPackage(packages)
-		importPaths = append(importPaths, correctPackage.Path)
+		importPaths = append(importPaths, correctPackage.RealPath)
 	}
 
 	return importPaths, nil

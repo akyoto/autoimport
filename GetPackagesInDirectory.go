@@ -1,7 +1,6 @@
 package autoimport
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 	"strings"
@@ -12,7 +11,7 @@ import (
 
 // GetPackagesInDirectory returns a map of package names mapped to packages.
 func GetPackagesInDirectory(srcPath string, root string) PackageIndex {
-	fmt.Println("Scanning", srcPath)
+	// fmt.Println("Scanning", srcPath)
 	packages := []*Package{}
 	packageByPath := map[string]*Package{}
 	packagesByName := map[string][]*Package{}
@@ -30,22 +29,37 @@ func GetPackagesInDirectory(srcPath string, root string) PackageIndex {
 			return filepath.SkipDir
 		}
 
-		packagePath := strings.TrimPrefix(path, root)
-		packageName := filepath.Base(packagePath)
+		packageRealPath := strings.TrimPrefix(path, root)
+		packageName := baseName
 
 		if packageName == "." {
 			return nil
 		}
 
+		// Remove version number from import path
+		packageImportPath := packageRealPath
+		atPosition := strings.Index(packageImportPath, "@")
+
+		if atPosition != -1 {
+			slashPosition := strings.Index(packageImportPath[atPosition:], "/")
+
+			if slashPosition == -1 {
+				packageImportPath = packageImportPath[:atPosition]
+			} else {
+				packageImportPath = packageImportPath[:atPosition] + packageImportPath[atPosition+slashPosition:]
+			}
+		}
+
 		pkg := &Package{
 			DirectoryName: packageName,
-			Path:          packagePath,
+			RealPath:      packageRealPath,
+			ImportPath:    packageImportPath,
 		}
 
 		packages = append(packages, pkg)
-		packageByPath[pkg.Path] = pkg
+		packageByPath[pkg.RealPath] = pkg
 
-		// fmt.Println(color.GreenString(pkg.DirectoryName), pkg.Path)
+		// fmt.Println(color.GreenString(pkg.DirectoryName), pkg.RealPath)
 		return nil
 	}
 
@@ -56,11 +70,11 @@ func GetPackagesInDirectory(srcPath string, root string) PackageIndex {
 			return nil
 		}
 
-		packagePath := filepath.Dir(path)
-		packagePath = strings.TrimPrefix(packagePath, root)
-		// fmt.Println("Go file in", packagePath, filepath.Base(path))
+		packageRealPath := filepath.Dir(path)
+		packageRealPath = strings.TrimPrefix(packageRealPath, root)
+		// fmt.Println("Go file in", packageRealPath, filepath.Base(path))
 
-		pkg, exists := packageByPath[packagePath]
+		pkg, exists := packageByPath[packageRealPath]
 
 		if !exists {
 			return nil

@@ -12,7 +12,7 @@ func printPackagesByName(packagesByName map[string][]*Package) {
 		fmt.Println(color.GreenString(name))
 
 		for _, pkg := range packageList {
-			fmt.Printf(" - %s\n", pkg.Path)
+			fmt.Printf(" - %s\n", pkg.ImportPath)
 		}
 	}
 }
