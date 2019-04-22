@@ -1,0 +1,42 @@
+// Generated code example
+package components
+
+// Activity component
+func Activity(activity arn.Activity, user *arn.User) string {
+	_b, _ := acquireBytesBuffer()
+	streamActivity(_b, activity, user)
+	pool.Put(_b)
+	return _b.String()
+}
+
+func streamActivity(_b *bytes.Buffer, activity arn.Activity, user *arn.User) {
+	_b.WriteString("<div id='")
+	_b.WriteString(html.EscapeString(fmt.Sprint(fmt.Sprintf("activity-%s", activity.GetID()))))
+	_b.WriteString("' data-api='")
+	_b.WriteString(html.EscapeString(fmt.Sprint(utils.ActivityAPILink(activity))))
+	_b.WriteString("' class='activity post-parent mountable'><div class='post-author'>")
+	streamAvatar(_b, activity.Creator())
+	_b.WriteString("</div><div class='post-content'><div class='activity-header'><div class='activity-parent'>")
+	if activity.TypeName() == "ActivityCreate" {
+	streamActivityCreateTitle(_b, activity.(*arn.ActivityCreate), user)
+	}else if activity.TypeName() == "ActivityConsume" {
+	streamActivityConsumeTitle(_b, activity.(*arn.ActivityConsume), user)
+	}
+	_b.WriteString("</div>")
+	if user != nil {
+	if user.ID == activity.GetCreatedBy() && activity.TypeName() == "ActivityConsume" {
+	_b.WriteString("<button data-confirm-type='activity' class='activity-action tip action' data-action='deleteObject' data-trigger='click' aria-label='Delete' data-return-path='/activity'>")
+	streamRawIcon(_b, "trash")
+	_b.WriteString("</button>")
+	}
+	}
+	_b.WriteString("<div data-date='")
+	_b.WriteString(html.EscapeString(fmt.Sprint(activity.GetCreated())))
+	_b.WriteString("' class='activity-date utc-date'></div></div>")
+	if activity.TypeName() == "ActivityCreate" {
+	streamActivityCreateText(_b, activity.(*arn.ActivityCreate), user)
+	}else if activity.TypeName() == "ActivityConsume" {
+	streamActivityConsumeText(_b, activity.(*arn.ActivityConsume), user)
+	}
+	_b.WriteString("</div></div>")
+}

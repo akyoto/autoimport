@@ -3,6 +3,9 @@ package autoimport
 import (
 	"fmt"
 	"path"
+	"sync"
+
+	"github.com/blitzprog/color"
 )
 
 var packagesByName = PackageIndex{}
@@ -41,27 +44,25 @@ func Files(files []string) error {
 		}
 	}
 
-	printPackagesByName(packagesByName)
+	// printPackagesByName(packagesByName)
 
-	// ...
+	wg := sync.WaitGroup{}
 
-	// wg := sync.WaitGroup{}
+	for _, file := range files {
+		wg.Add(1)
+		path := file
 
-	// for _, file := range files {
-	// 	wg.Add(1)
-	// 	path := file
+		go func() {
+			err := processFile(path)
 
-	// 	go func() {
-	// 		err := processFile(path)
+			if err != nil {
+				color.Red(err.Error())
+			}
 
-	// 		if err != nil {
-	// 			color.Red(err.Error())
-	// 		}
+			wg.Done()
+		}()
+	}
 
-	// 		wg.Done()
-	// 	}()
-	// }
-
-	// wg.Wait()
+	wg.Wait()
 	return nil
 }

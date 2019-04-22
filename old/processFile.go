@@ -8,7 +8,6 @@ import (
 	"go/token"
 	"io/ioutil"
 	"os"
-	"strings"
 
 	"github.com/blitzprog/color"
 )
@@ -58,10 +57,11 @@ func processFile(path string) error {
 	// Seek to the beginning (after the package line)
 	file.Seek(seekPos, 0)
 
-	importCommand := fmt.Sprintf("\nimport (\n\t\"%s\"\n)\n\n", strings.Join(importPaths, "\"\n\t\""))
-	file.WriteString(importCommand)
-	file.Write(code[seekPos:])
-	file.Sync()
+	// importCommand := fmt.Sprintf("\nimport (\n\t\"%s\"\n)\n\n", strings.Join(importPaths, "\"\n\t\""))
+	// file.WriteString(importCommand)
+	// file.Write(code[seekPos:])
+	// file.Sync()
+	fmt.Println(importPaths)
 
 	return nil
 }
@@ -223,7 +223,7 @@ func parse(src []byte, fileName string) ([]string, error) {
 		// }
 
 		correctPackage := findCorrectPackage(packages)
-		importPaths = append(importPaths, correctPackage.RealPath)
+		importPaths = append(importPaths, correctPackage.ImportPath)
 	}
 
 	return importPaths, nil
