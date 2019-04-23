@@ -1,12 +1,13 @@
 package parser
 
 import (
+	"fmt"
 	"go/scanner"
 	"go/token"
 )
 
 // PackageIdentifiers returns all identifiers that are referring to packages.
-func PackageIdentifiers(src []byte) map[string]bool {
+func PackageIdentifiers(src []byte) (map[string]bool, error) {
 	packageIdentifiers := map[string]bool{}
 
 	// Initialize the scanner.
@@ -150,6 +151,10 @@ func PackageIdentifiers(src []byte) map[string]bool {
 				break
 			}
 
+			if len(variableStacks) == 1 {
+				return packageIdentifiers, fmt.Errorf("Invalid `}` without opening `{`:\n%s", string(src))
+			}
+
 			variableStacks = variableStacks[:len(variableStacks)-1]
 
 		// [
@@ -180,5 +185,5 @@ func PackageIdentifiers(src []byte) map[string]bool {
 		// fmt.Printf("%s\t%s\t%q\n", fset.Position(pos), tok, literal)
 	}
 
-	return packageIdentifiers
+	return packageIdentifiers, nil
 }

@@ -58,9 +58,13 @@ func New(moduleDirectory string) *AutoImport {
 }
 
 // Imports returns the import paths used in the given source file.
-func (importer *AutoImport) Imports(src []byte) []string {
+func (importer *AutoImport) Imports(src []byte) ([]string, error) {
 	var imports []string
-	identifiers := parser.PackageIdentifiers(src)
+	identifiers, err := parser.PackageIdentifiers(src)
+
+	if err != nil {
+		return nil, err
+	}
 
 	for id := range identifiers {
 		possiblePackages := importer.index[id]
@@ -85,18 +89,26 @@ func (importer *AutoImport) Imports(src []byte) []string {
 		return countA < countB
 	})
 
-	return imports
+	return imports, nil
 }
 
 // Source finds the correct import statements and returns code that includes import paths.
 func (importer *AutoImport) Source(src []byte) ([]byte, error) {
-	imports := importer.Imports(src)
+	imports, err := importer.Imports(src)
+
+	if err != nil {
+		return src, err
+	}
 
 	// for _, importPath := range imports {
 	// 	fmt.Printf("%s\n", color.GreenString(importPath))
 	// }
 
-	importCommand := fmt.Sprintf("\nimport (\n\t%s\n)\n", strings.Join(imports, "\n\t"))
+	importCommand := ""
+
+	if len(imports) > 0 {
+		importCommand = fmt.Sprintf("\nimport (\n\t\"%s\"\n)\n", strings.Join(imports, "\"\n\t\""))
+	}
 
 	// Find package definition
 	packagePos := bytes.Index(src, packageStatement)
