@@ -5,8 +5,8 @@ import (
 	"path"
 )
 
-// findGoModulesPath will attempt to find the path of the installed Go standard library.
-func findGoModulesPath() string {
+// getGoModulesPath will attempt to find the path of the installed Go standard library.
+func getGoModulesPath() string {
 	goPath := os.Getenv("GOPATH")
 
 	if goPath != "" {

@@ -6,8 +6,8 @@ import (
 	"path/filepath"
 )
 
-// FindGoMod will attempt to find the absolute path of the go.mod file.
-func FindGoMod(file string) string {
+// findGoMod will attempt to find the absolute path of the go.mod file.
+func findGoMod(file string) string {
 	directory, err := filepath.Abs(path.Clean(file))
 
 	if err != nil {

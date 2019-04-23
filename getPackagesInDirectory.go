@@ -9,8 +9,8 @@ import (
 	"github.com/akyoto/color"
 )
 
-// GetPackagesInDirectory returns a map of package names mapped to packages.
-func GetPackagesInDirectory(srcPath string, root string) PackageIndex {
+// getPackagesInDirectory returns a map of package names mapped to packages.
+func getPackagesInDirectory(srcPath string, root string) PackageIndex {
 	// fmt.Println("Scanning", srcPath)
 	packages := []*Package{}
 	packageByPath := map[string]*Package{}

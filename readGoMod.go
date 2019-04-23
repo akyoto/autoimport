@@ -6,19 +6,20 @@ import (
 	"strings"
 )
 
-// GetDirectDependencies will attempt to read all direct dependencies in the go.mod file.
-// It returns a list of all dependencies used.
-func GetDirectDependencies(goModPath string) ([]*Dependency, error) {
+// readGoMod will attempt to read all direct dependencies in the go.mod file.
+// It returns a list of all dependencies used, the module import path and potentially an error.
+func readGoMod(goModPath string) ([]*Dependency, string, error) {
 	file, err := os.Open(goModPath)
 
 	if err != nil {
-		return nil, err
+		return nil, "", err
 	}
 
 	defer file.Close()
 	buffer := make([]byte, 4096)
 	lastNewline := 0
 	remaining := ""
+	moduleImportPath := ""
 	dependencies := []*Dependency{}
 
 	for {
@@ -31,7 +32,12 @@ func GetDirectDependencies(goModPath string) ([]*Dependency, error) {
 				lastNewline = i
 				remaining = ""
 
-				if strings.HasPrefix(line, "//") || strings.HasPrefix(line, "module ") || strings.HasPrefix(line, "replace ") {
+				if strings.HasPrefix(line, "//") || strings.HasPrefix(line, "replace ") {
+					continue
+				}
+
+				if strings.HasPrefix(line, "module ") {
+					moduleImportPath = line[len("module "):]
 					continue
 				}
 
@@ -68,5 +74,5 @@ func GetDirectDependencies(goModPath string) ([]*Dependency, error) {
 		lastNewline = 0
 	}
 
-	return dependencies, nil
+	return dependencies, moduleImportPath, nil
 }

@@ -1,11 +1,10 @@
-package autoimport_test
+package autoimport
 
 import (
 	"path"
 	"path/filepath"
 	"testing"
 
-	"github.com/akyoto/autoimport"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -22,7 +21,7 @@ func TestFindGoMod(t *testing.T) {
 	}
 
 	for file, result := range files {
-		goModPath := autoimport.FindGoMod(file)
+		goModPath := findGoMod(file)
 		assert.Equal(t, result, goModPath, "Path: %s", file)
 	}
 }
