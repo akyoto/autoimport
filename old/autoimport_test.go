@@ -3,7 +3,7 @@ package autoimport_test
 import (
 	"testing"
 
-	"github.com/blitzprog/autoimport"
+	"github.com/akyoto/autoimport"
 )
 
 func TestCompile(t *testing.T) {

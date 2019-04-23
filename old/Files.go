@@ -5,7 +5,7 @@ import (
 	"path"
 	"sync"
 
-	"github.com/blitzprog/color"
+	"github.com/akyoto/color"
 )
 
 var packagesByName = PackageIndex{}

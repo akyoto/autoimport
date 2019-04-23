@@ -1,8 +1,8 @@
 package autoimport
 
 import (
-	"github.com/blitzprog/autoimport/parser"
-	"github.com/fatih/color"
+	"github.com/akyoto/autoimport/parser"
+	"github.com/akyoto/color"
 )
 
 // AutoImport helps you automatically add imports to your source files.

@@ -5,7 +5,7 @@ A faster goimports implementation. It assumes that the files are part of a Go mo
 ## Installation
 
 ```bash
-go get github.com/blitzprog/autoimport/...
+go get github.com/akyoto/autoimport/...
 ```
 
 ## CLI

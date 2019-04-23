@@ -5,7 +5,7 @@ import (
 	"go/scanner"
 	"go/token"
 
-	"github.com/blitzprog/color"
+	"github.com/akyoto/color"
 )
 
 // PackageIdentifiers returns all identifiers that are referring to packages.

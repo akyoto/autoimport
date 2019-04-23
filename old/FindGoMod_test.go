@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/blitzprog/autoimport"
+	"github.com/akyoto/autoimport"
 	"github.com/stretchr/testify/assert"
 )
 

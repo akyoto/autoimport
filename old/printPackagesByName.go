@@ -3,7 +3,7 @@ package autoimport
 import (
 	"fmt"
 
-	"github.com/blitzprog/color"
+	"github.com/akyoto/color"
 )
 
 func printPackagesByName(packagesByName map[string][]*Package) {

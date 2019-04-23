@@ -9,7 +9,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"github.com/blitzprog/color"
+	"github.com/akyoto/color"
 )
 
 func processFile(path string) error {

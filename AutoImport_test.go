@@ -4,7 +4,7 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/blitzprog/autoimport"
+	"github.com/akyoto/autoimport"
 )
 
 func TestSource(t *testing.T) {

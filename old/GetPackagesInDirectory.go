@@ -6,7 +6,7 @@ import (
 	"strings"
 	"unicode"
 
-	"github.com/blitzprog/color"
+	"github.com/akyoto/color"
 )
 
 // GetPackagesInDirectory returns a map of package names mapped to packages.
