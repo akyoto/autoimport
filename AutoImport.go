@@ -3,6 +3,8 @@ package autoimport
 import (
 	"fmt"
 	"path"
+	"sort"
+	"strings"
 
 	"github.com/akyoto/autoimport/parser"
 	"github.com/akyoto/color"
@@ -52,10 +54,10 @@ func New(moduleDirectory string) *AutoImport {
 	}
 }
 
-// Source finds the correct import statements and returns code that includes import paths.
-func (importer *AutoImport) Source(src []byte) []byte {
+// Imports returns the import paths used in the given source file.
+func (importer *AutoImport) Imports(src []byte) []string {
+	var imports []string
 	identifiers := parser.PackageIdentifiers(src)
-	println("Identifiers:")
 
 	for id := range identifiers {
 		possiblePackages := importer.index[id]
@@ -64,11 +66,31 @@ func (importer *AutoImport) Source(src []byte) []byte {
 			continue
 		}
 
-		color.Green(id)
+		pkg := findCorrectPackage(possiblePackages)
+		imports = append(imports, pkg.ImportPath)
+	}
 
-		for _, pkg := range possiblePackages {
-			println(pkg.ImportPath)
+	// Sort by file system depth
+	sort.Slice(imports, func(a int, b int) bool {
+		countA := strings.Count(imports[a], "/")
+		countB := strings.Count(imports[b], "/")
+
+		if countA == countB {
+			return imports[a] < imports[b]
 		}
+
+		return countA < countB
+	})
+
+	return imports
+}
+
+// Source finds the correct import statements and returns code that includes import paths.
+func (importer *AutoImport) Source(src []byte) []byte {
+	imports := importer.Imports(src)
+
+	for _, importPath := range imports {
+		fmt.Printf("%s\n", color.GreenString(importPath))
 	}
 
 	return src

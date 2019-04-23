@@ -5,7 +5,7 @@ A faster goimports implementation. It assumes that the files are part of a Go mo
 ## Installation
 
 ```bash
-go get github.com/akyoto/autoimport/...
+go install github.com/akyoto/autoimport/...
 ```
 
 ## CLI
@@ -16,10 +16,18 @@ autoimport hello.go world.go
 
 ## API
 
+### New
+
+```go
+importer := autoimport.New("/home/user/projects/helloworld")
+```
+
+Creates a new importer inside the given project directory. The root directory must have a `go.mod` file.
+
 ### Files
 
 ```go
-autoimport.Files([]string{
+importer.Files([]string{
 	"hello.go",
 	"world.go",
 })
@@ -27,10 +35,8 @@ autoimport.Files([]string{
 
 Automatically adds import statements to the given files.
 
-### GetPackagesInDirectory
+### Source
 
 ```go
-autoimport.GetPackagesInDirectory(path string) map[string][]*Package
+importer.Source([]byte{"GO CODE HERE"})
 ```
-
-Returns a map of package names mapped to the possible import paths.

@@ -1,11 +1,8 @@
 package parser
 
 import (
-	"fmt"
 	"go/scanner"
 	"go/token"
-
-	"github.com/akyoto/color"
 )
 
 // PackageIdentifiers returns all identifiers that are referring to packages.
@@ -36,7 +33,7 @@ func PackageIdentifiers(src []byte) map[string]bool {
 	// Traverse the input source.
 	// Our goal is to find identifiers followed by a period.
 	for {
-		pos, tok, literal := s.Scan()
+		_, tok, literal := s.Scan()
 
 		if tok == token.EOF {
 			break
@@ -81,12 +78,12 @@ func PackageIdentifiers(src []byte) map[string]bool {
 				break
 			}
 
-			color.Yellow("IMPORT %s", lastIdentifier)
+			// color.Yellow("IMPORT %s", lastIdentifier)
 			packageIdentifiers[lastIdentifier] = true
 
 		// :=
 		case token.DEFINE:
-			color.Magenta("VARS %v", lastIdentifiers)
+			// color.Magenta("VARS %v", lastIdentifiers)
 			stackIndex := len(variableStacks) - 1
 
 			for _, varName := range lastIdentifiers {
@@ -116,7 +113,7 @@ func PackageIdentifiers(src []byte) map[string]bool {
 				inFunctionSignature = false
 				parameterName = ""
 				parameterType = ""
-				color.Cyan(functionName)
+				// color.Cyan(functionName)
 				functionName = ""
 			}
 
@@ -130,6 +127,10 @@ func PackageIdentifiers(src []byte) map[string]bool {
 
 			lastIdentifiers = append(lastIdentifiers, literal)
 
+		// ;
+		case token.SEMICOLON:
+			lastIdentifiers = nil
+
 		// {
 		case token.LBRACE:
 			// Part of type definition
@@ -140,7 +141,6 @@ func PackageIdentifiers(src []byte) map[string]bool {
 
 			variableStacks = append(variableStacks, functionParameters)
 			functionParameters = nil
-			lastIdentifiers = nil
 
 		// }
 		case token.RBRACE:
@@ -151,7 +151,6 @@ func PackageIdentifiers(src []byte) map[string]bool {
 			}
 
 			variableStacks = variableStacks[:len(variableStacks)-1]
-			lastIdentifiers = nil
 
 		// [
 		case token.LBRACK:
@@ -178,7 +177,7 @@ func PackageIdentifiers(src []byte) map[string]bool {
 			}
 		}
 
-		fmt.Printf("%s\t%s\t%q\n", fset.Position(pos), tok, literal)
+		// fmt.Printf("%s\t%s\t%q\n", fset.Position(pos), tok, literal)
 	}
 
 	return packageIdentifiers
