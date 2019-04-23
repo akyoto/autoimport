@@ -1,14 +1,17 @@
 package autoimport
 
 import (
+	"bytes"
+	"errors"
 	"fmt"
 	"path"
 	"sort"
 	"strings"
 
 	"github.com/akyoto/autoimport/parser"
-	"github.com/akyoto/color"
 )
+
+var packageStatement = []byte("package ")
 
 // AutoImport helps you automatically add imports to your source files.
 type AutoImport struct {
@@ -86,12 +89,39 @@ func (importer *AutoImport) Imports(src []byte) []string {
 }
 
 // Source finds the correct import statements and returns code that includes import paths.
-func (importer *AutoImport) Source(src []byte) []byte {
+func (importer *AutoImport) Source(src []byte) ([]byte, error) {
 	imports := importer.Imports(src)
 
-	for _, importPath := range imports {
-		fmt.Printf("%s\n", color.GreenString(importPath))
+	// for _, importPath := range imports {
+	// 	fmt.Printf("%s\n", color.GreenString(importPath))
+	// }
+
+	importCommand := fmt.Sprintf("\nimport (\n\t%s\n)\n", strings.Join(imports, "\n\t"))
+
+	// Find package definition
+	packagePos := bytes.Index(src, packageStatement)
+
+	if packagePos == -1 {
+		return src, errors.New("Package definition missing")
 	}
 
-	return src
+	seekPos := 0
+
+	for i := packagePos; i < len(src); i++ {
+		if src[i] == '\n' {
+			seekPos = i + 1
+			break
+		}
+	}
+
+	// Contains only a single package statement
+	if seekPos == 0 {
+		return src, nil
+	}
+
+	// Insert imports
+	endOfFile := append([]byte(importCommand), src[seekPos:]...)
+	newSource := append(src[:seekPos], endOfFile...)
+
+	return newSource, nil
 }
