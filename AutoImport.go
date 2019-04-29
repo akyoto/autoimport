@@ -22,7 +22,7 @@ type AutoImport struct {
 // New creates a new auto import.
 func New(moduleDirectory string) *AutoImport {
 	standardPackagesPath := getStandardPackagesPath()
-	standardPackages := getPackagesInDirectory(standardPackagesPath, standardPackagesPath)
+	standardPackages := GetPackagesInDirectory(standardPackagesPath, standardPackagesPath)
 	goModPath := findGoMod(moduleDirectory)
 	dependencies, moduleImportPath, err := readGoMod(goModPath)
 
@@ -36,12 +36,12 @@ func New(moduleDirectory string) *AutoImport {
 	for _, dep := range dependencies {
 		directoryName := fmt.Sprintf("%s@%s", dep.ImportPath, dep.Version)
 		packageLocation := path.Join(goModulesPath, directoryName)
-		importedPackages := getPackagesInDirectory(packageLocation, goModulesPath)
+		importedPackages := GetPackagesInDirectory(packageLocation, goModulesPath)
 		merge(standardPackages, importedPackages)
 	}
 
 	// Local packages
-	innerPackages := getPackagesInDirectory(moduleDirectory, moduleDirectory)
+	innerPackages := GetPackagesInDirectory(moduleDirectory, moduleDirectory)
 
 	for _, packageList := range innerPackages {
 		for i := range packageList {

@@ -9,16 +9,16 @@ import (
 	"github.com/akyoto/color"
 )
 
-// getPackagesInDirectory returns a map of package names mapped to packages.
-func getPackagesInDirectory(srcPath string, root string) PackageIndex {
-	// fmt.Println("Scanning", srcPath)
+// GetPackagesInDirectory returns a map of package names mapped to packages.
+func GetPackagesInDirectory(scanPath string, importPathPrefix string) PackageIndex {
+	// fmt.Println("Scanning", scanPath)
 	packages := []*Package{}
 	packageByPath := map[string]*Package{}
 	packagesByName := map[string][]*Package{}
 	packagePrefix := "\npackage "
 
-	if !strings.HasSuffix(root, "/") {
-		root += "/"
+	if !strings.HasSuffix(importPathPrefix, "/") {
+		importPathPrefix += "/"
 	}
 
 	// onDirectory
@@ -29,7 +29,7 @@ func getPackagesInDirectory(srcPath string, root string) PackageIndex {
 			return filepath.SkipDir
 		}
 
-		packageRealPath := strings.TrimPrefix(path, root)
+		packageRealPath := strings.TrimPrefix(path, importPathPrefix)
 		packageName := baseName
 
 		if packageName == "." {
@@ -71,7 +71,7 @@ func getPackagesInDirectory(srcPath string, root string) PackageIndex {
 		}
 
 		packageRealPath := filepath.Dir(path)
-		packageRealPath = strings.TrimPrefix(packageRealPath, root)
+		packageRealPath = strings.TrimPrefix(packageRealPath, importPathPrefix)
 		// fmt.Println("Go file in", packageRealPath, filepath.Base(path))
 
 		pkg, exists := packageByPath[packageRealPath]
@@ -126,14 +126,14 @@ func getPackagesInDirectory(srcPath string, root string) PackageIndex {
 	}
 
 	// Traverse directory
-	filepath.Walk(srcPath, func(path string, info os.FileInfo, err error) error {
+	err := filepath.Walk(scanPath, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			color.Red(err.Error())
 			return nil
 		}
 
 		if info == nil {
-			color.Red("Invalid file path: %s", srcPath)
+			color.Red("Invalid file path: %s", scanPath)
 			return nil
 		}
 
@@ -143,6 +143,10 @@ func getPackagesInDirectory(srcPath string, root string) PackageIndex {
 
 		return onDirectory(path)
 	})
+
+	if err != nil {
+		color.Red(err.Error())
+	}
 
 	return packagesByName
 }
