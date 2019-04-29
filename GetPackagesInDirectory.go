@@ -64,9 +64,21 @@ func GetPackagesInDirectory(scanPath string, importPathPrefix string) PackageInd
 	}
 
 	// onFile
-	onFile := func(path string) error {
+	onFile := func(path string, fileInfo os.FileInfo) error {
 		// Ignore files that are not Go source code
 		if !strings.HasSuffix(path, ".go") || strings.HasSuffix(path, "_test.go") {
+			if fileInfo.Name() == "go.mod" {
+				packageRealPath := filepath.Dir(path)
+				packageRealPath = strings.TrimPrefix(packageRealPath, importPathPrefix)
+				pkg, exists := packageByPath[packageRealPath]
+
+				if !exists {
+					return nil
+				}
+
+				pkg.IsModuleRoot = true
+			}
+
 			return nil
 		}
 
@@ -138,7 +150,7 @@ func GetPackagesInDirectory(scanPath string, importPathPrefix string) PackageInd
 		}
 
 		if !info.IsDir() {
-			return onFile(path)
+			return onFile(path, info)
 		}
 
 		return onDirectory(path)

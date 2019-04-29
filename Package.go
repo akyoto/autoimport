@@ -6,4 +6,5 @@ type Package struct {
 	RealPath      string // Real file path
 	ImportPath    string // Import path used in Go source files
 	DirectoryName string // Base name of the directory
+	IsModuleRoot  bool   // Only root packages have go.mod files
 }
