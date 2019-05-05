@@ -9,6 +9,7 @@ import (
 	"strings"
 
 	"github.com/akyoto/autoimport/parser"
+	"github.com/akyoto/color"
 )
 
 var packageStatement = []byte("package ")
@@ -34,7 +35,14 @@ func New(moduleDirectory string) *AutoImport {
 	goModulesPath := getGoModulesPath()
 
 	for _, dep := range dependencies {
-		directoryName := fmt.Sprintf("%s@%s", dep.ImportPath, dep.Version)
+		directoryName, err := encodePkgModPath(dep.ImportPath)
+
+		if err != nil {
+			color.Red(err.Error())
+			continue
+		}
+
+		directoryName = fmt.Sprintf("%s@%s", directoryName, dep.Version)
 		packageLocation := path.Join(goModulesPath, directoryName)
 		importedPackages := GetPackagesInDirectory(packageLocation, goModulesPath)
 		merge(standardPackages, importedPackages)

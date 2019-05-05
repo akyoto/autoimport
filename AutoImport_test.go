@@ -15,5 +15,5 @@ func TestSource(t *testing.T) {
 	assert.NoError(t, err)
 	newSource, err := importer.Source(src)
 	assert.NoError(t, err)
-	assert.True(t, bytes.Contains(newSource, []byte("fmt\n")))
+	assert.True(t, bytes.Contains(newSource, []byte("\"fmt\"\n")))
 }
