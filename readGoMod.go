@@ -32,7 +32,7 @@ func readGoMod(goModPath string) ([]*Dependency, string, error) {
 				lastNewline = i
 				remaining = ""
 
-				if strings.HasPrefix(line, "//") || strings.HasPrefix(line, "replace ") {
+				if strings.HasPrefix(line, "//") || strings.HasPrefix(line, "replace ") || strings.HasPrefix(line, "exclude ") {
 					continue
 				}
 
