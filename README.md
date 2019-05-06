@@ -11,7 +11,7 @@ A faster goimports implementation. It assumes that the files are part of a Go mo
 ## Installation
 
 ```shell
-go get -u github.com/blitzprog/autoimport/...
+go get -u github.com/blitzprog/home/...
 ```
 
 ## CLI
@@ -66,13 +66,13 @@ Want to see [your own name here](https://www.patreon.com/eduardurbach)?
 |---|
 | [Eduard Urbach](https://eduardurbach.com) |
 
-[godoc-image]: https://godoc.org/github.com/blitzprog/autoimport?status.svg
-[godoc-url]: https://godoc.org/github.com/blitzprog/autoimport
-[report-image]: https://goreportcard.com/badge/github.com/blitzprog/autoimport
-[report-url]: https://goreportcard.com/report/github.com/blitzprog/autoimport
-[tests-image]: https://cloud.drone.io/api/badges/blitzprog/autoimport/status.svg
-[tests-url]: https://cloud.drone.io/blitzprog/autoimport
-[coverage-image]: https://codecov.io/gh/blitzprog/autoimport/graph/badge.svg
-[coverage-url]: https://codecov.io/gh/blitzprog/autoimport
+[godoc-image]: https://godoc.org/github.com/blitzprog/home?status.svg
+[godoc-url]: https://godoc.org/github.com/blitzprog/home
+[report-image]: https://goreportcard.com/badge/github.com/blitzprog/home
+[report-url]: https://goreportcard.com/report/github.com/blitzprog/home
+[tests-image]: https://cloud.drone.io/api/badges/blitzprog/home/status.svg
+[tests-url]: https://cloud.drone.io/blitzprog/home
+[coverage-image]: https://codecov.io/gh/blitzprog/home/graph/badge.svg
+[coverage-url]: https://codecov.io/gh/blitzprog/home
 [patreon-image]: https://img.shields.io/badge/patreon-donate-green.svg
 [patreon-url]: https://www.patreon.com/eduardurbach
