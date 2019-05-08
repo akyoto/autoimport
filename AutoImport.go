@@ -67,7 +67,7 @@ func New(moduleDirectory string) *AutoImport {
 
 // Imports returns the import paths used in the given source file.
 func (importer *AutoImport) Imports(src []byte) ([]string, error) {
-	var imports []string
+	imports := make([]string, 0, 16)
 	identifiers, err := parser.PackageIdentifiers(src)
 
 	if err != nil {
