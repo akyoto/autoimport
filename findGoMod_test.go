@@ -5,7 +5,7 @@ import (
 	"path/filepath"
 	"testing"
 
-	"github.com/stretchr/testify/assert"
+	"github.com/akyoto/assert"
 )
 
 func TestFindGoMod(t *testing.T) {
@@ -22,6 +22,6 @@ func TestFindGoMod(t *testing.T) {
 
 	for file, result := range files {
 		goModPath := findGoMod(file)
-		assert.Equal(t, result, goModPath, "Path: %s", file)
+		assert.Equal(t, result, goModPath)
 	}
 }
